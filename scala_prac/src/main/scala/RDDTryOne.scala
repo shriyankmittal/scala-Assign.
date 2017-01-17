@@ -1,5 +1,9 @@
 package rddtry
 
+import java.io.PrintWriter
+import java.io._
+
+
 import org.apache.spark.sql.{SQLContext, SaveMode}
 import org.apache.spark.{SparkConf, SparkContext}
 /**
@@ -82,6 +86,18 @@ object RDDTryOne {
     //perUnitRDD.saveAsTextFile("/home/shriyank/Desktop/WordssSorted")
     //perUnitRDD.saveAsTextFile("/home/shriyank/Programs/SBT/scala_prac/perUnits")
     perUnitRDD.foreach(println)
+
+    val file = "/home/shriyank/Programs/SBT/scala_prac/maxPercentileRDD"
+    val writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)))
+    for (x <- perUnitRDD) {
+      writer.write(x + "\n")  // however you want to format it
+    }
+    writer.close()
+
+    println("Total Sentence Count " + readRDD.count())
+    println("Total Word Count after Split  " + splitRDD.count())
+    println("Total Word Count after Filtering " + filteredRDD.count())
+    println("Total Unique Word Count after Split " + splitRDD.count())
 
 
   }
