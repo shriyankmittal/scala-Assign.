@@ -87,10 +87,10 @@ object RDDTryOne {
     //perUnitRDD.saveAsTextFile("/home/shriyank/Programs/SBT/scala_prac/perUnits")
     perUnitRDD.foreach(println)
 
-    val file = "/home/shriyank/Programs/SBT/scala_prac/maxPercentileRDD"
+    val file = "/home/shriyank/Programs/SBT/scala_prac/perunitRDD"
     val writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)))
     for (x <- perUnitRDD) {
-      writer.write(x + "\n")  // however you want to format it
+      writer.write(x + "\n")
     }
     writer.close()
 
