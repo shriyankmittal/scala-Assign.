@@ -73,7 +73,6 @@ object DataFrameTry{
     val LICDF = perDF.filter((perDF("payer")=== "lic") && (perDF("datevalidation").gt(current_date())))
     val AIGDF = perDF.filter((perDF("payer")=== "aig") && (perDF("datevalidation").gt(current_date())))
 
-
     AIGDF.show()
 
     //drop table usin dropduplicate method
@@ -85,13 +84,6 @@ object DataFrameTry{
     val dropAIGDF = AIGDF.groupBy("id", "amount").agg(max("id"))
     dropLICDF.show()
     dropAIGDF.show()
-//    LICDF.agg(countDistinct("id")).show()
-    //LICDF.groupBy("id").count().show
-    //var dropLICDF = LICDF.filter((LICDF("id")).distinct())
-//    val dropLICDF = LICDF.select(LICDF("amount")).distinct()
-//    dropLICDF
-    //dropLICDF.dropDuplicates("id", "amount")
-    //dropLICDF.select("id").distinct().collect()
 
     val sumlic = dropLICDF.agg(sum("amount")).first.get(0)
     println(sumlic)
@@ -104,37 +96,7 @@ object DataFrameTry{
 
     val aigRDD = sc.parallelize(sumaig.toString)
     //aigRDD.coalesce(1).saveAsTextFile("/home/shriyank/Programs/SBT/scala_prac/aig_sums")
-
-
-    //LICDF.dropDuplicates()
-//    dropLICDF.show()
-
-//    val LICAmt = LICDF.groupBy().sum("amount")
-//    val AIGAmt = AIGDF.groupBy().sum("amount")
-//
-//    println("total valid amount insured by LIC: " + LICAmt)
-//    println("total valid amount insured by AIG: " + AIGAmt)
-
-//      val validrdd = validDF.map(t => (t(0).toString, t(1).toString.toInt))
-//      val l = validrdd.reduceByKey(_+_)
-//
-//      val o = l.map(q => q._1 + "," + q._2).coalesce(1)
-//    o.foreach(println)
-    //writing to CSV
-
-//    LICAmt
-//      .write
-//      .mode(SaveMode.Overwrite)
-//      .format("com.databricks.spark.csv")
-//      .option("header","true")
-//      .save("/home/shriyank/Programs/SBT/scala_prac/LICCSV")
-//
-//    AIGAmt
-//      .write
-//      .mode(SaveMode.Overwrite)
-//      .format("com.databricks.spark.csv")
-//      .option("header","true")
-//      .save("/home/shriyank/Programs/SBT/scala_prac/AIGCSV")
+ 
   }
 }
 
