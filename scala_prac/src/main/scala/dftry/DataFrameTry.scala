@@ -3,7 +3,6 @@
   */
 package dftry
 
-
 import org.apache.spark.sql.{SQLContext, SaveMode}
 import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.sql.functions._
@@ -56,10 +55,13 @@ object DataFrameTry{
       .join( broadcast(personInsuranceDF), personDF("id") === personInsuranceDF("id"),
       "right_outer"
       ).drop(personDF("id"))
+
+    println("----------------------------JOIN of person insurance------------------------------------")
     perDF.show()
 
     val ageLessThan50DF = personDF.filter(personDF("age")<50)
-    //ageLessThan50DF.show()
+    println("----------------age less than 50------------------------------------------------")
+    ageLessThan50DF.show()
     ageLessThan50DF
       .write
       .mode(SaveMode.Overwrite)   // to overwrite the csv if saved to a given directory
@@ -67,36 +69,50 @@ object DataFrameTry{
       .option("header", "true")
       .save("/home/shriyank/Programs/SBT/scala_prac/opCSV")
 
+    val a = personInsuranceDF.filter(personInsuranceDF("datevalidation").gt(current_date()))
+    //a.dropDuplicates(Array("id"))
+    //a.show()
+    val b = a.groupBy(a("payer")).agg(Map("amount" -> "sum"))
+    b.show()
+    b.write
+      .mode(SaveMode.Overwrite)
+      .format("com.databricks.spark.csv")
+      .option("header", "true")
+      .save("/home/shriyank/Programs/SBT/scala_prac/sumss")
 
-    //myDataFrame.filter(myDataFrame("expiry_date").lt(current_date()))
-    val validDF = perDF.filter((perDF("datevalidation").gt(current_date()))).drop("id").drop("datevalidation")
-    val LICDF = perDF.filter((perDF("payer")=== "lic") && (perDF("datevalidation").gt(current_date())))
-    val AIGDF = perDF.filter((perDF("payer")=== "aig") && (perDF("datevalidation").gt(current_date())))
-
-    AIGDF.show()
-
+//    val LICDF = perDF.filter((perDF("payer")=== "lic") && (perDF("datevalidation").gt(current_date())))
+//    val AIGDF = perDF.filter((perDF("payer")=== "aig") && (perDF("datevalidation").gt(current_date())))
+//
     //drop table usin dropduplicate method
 
     //LICDF.dropDuplicates(Array("id")).show()
 
     // drop table using groupBy method
-    val dropLICDF = LICDF.groupBy("id", "amount").agg(max("id"))
-    val dropAIGDF = AIGDF.groupBy("id", "amount").agg(max("id"))
-    dropLICDF.show()
-    dropAIGDF.show()
+//    val dropLICDF = LICDF.groupBy("id", "amount").agg(max("id"))
+//    val dropAIGDF = AIGDF.groupBy("id", "amount").agg(max("id"))
+//    println("------------------------concise LIC and AIG Table--------------------------------------------")
+//    dropLICDF.show()
+    //dropAIGDF.show()
+//    LICDF.agg(countDistinct("id")).show()
+    //LICDF.groupBy("id").count().show
+    //var dropLICDF = LICDF.filter((LICDF("id")).distinct())
+//    val dropLICDF = LICDF.select(LICDF("amount")).distinct()
+//    dropLICDF
+    //dropLICDF.dropDuplicates("id", "amount")
+    //dropLICDF.select("id").distinct().collect()
+    //println("------------------------LIC valid value--------------------------------------------")
+//    val sumlic = dropLICDF.agg(sum("amount")).first.get(0)
+//    println(sumlic)
 
-    val sumlic = dropLICDF.agg(sum("amount")).first.get(0)
-    println(sumlic)
+    //val licRDD = sc.parallelize(sumlic.toString)
+  //licRDD.coalesce(1).saveAsTextFile("/home/shriyank/Programs/SBT/scala_prac/lic_sums")
+//    println("-----------------------------AIG value-----------------------------------------------")
+//    val sumaig = dropAIGDF.agg(sum("amount")).first.get(0)
+//    println(sumaig)
 
-    val licRDD = sc.parallelize(sumlic.toString)
-    //licRDD.coalesce(1).saveAsTextFile("/home/shriyank/Programs/SBT/scala_prac/lic_sums")
-
-    val sumaig = dropAIGDF.agg(sum("amount")).first.get(0)
-    println(sumaig)
-
-    val aigRDD = sc.parallelize(sumaig.toString)
+    //val aigRDD = sc.parallelize(sumaig.toString)
     //aigRDD.coalesce(1).saveAsTextFile("/home/shriyank/Programs/SBT/scala_prac/aig_sums")
- 
+
   }
 }
 
