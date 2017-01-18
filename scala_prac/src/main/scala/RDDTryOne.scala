@@ -77,9 +77,12 @@ object RDDTryOne {
         val t = x._2.size
         (k, t)
       })
-    freqCountRDD.foreach(println)
-    //freqCountRDD.coalesce(1).saveAsTextFile("/home/shriyank/Programs/SBT/scala_prac/freqs")
+    println("-------------------------------FREQUENCY COUNT-----------------------------------------------")
 
+    freqCountRDD.foreach(println)
+    val freqCountRDDCSV = freqCountRDD.map(x => x._1 + " , " + x._2).coalesce(1)
+    //freqCountRDDCSV.saveAsTextFile("/home/shriyank/Programs/SBT/scala_prac/freqsss.csv")
+    println("--------------------------50 percentile-------------------------------------------")
     val ll = freqCountRDD.count().toInt / 2
     val perUnitRDD = wordCountRDD.coalesce(1).sortBy(_._2, ascending = false).take(ll)
     //perUnitRDD.foreach(println)
@@ -93,7 +96,7 @@ object RDDTryOne {
       writer.write(x + "\n")
     }
     writer.close()
-
+    println("----------------------------EXTRA INFO----------------------------------------")
     println("Total Sentence Count " + readRDD.count())
     println("Total Word Count after Split  " + splitRDD.count())
     println("Total Word Count after Filtering " + filteredRDD.count())
